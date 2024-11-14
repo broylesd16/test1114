@@ -9,6 +9,8 @@ if (!is_logged_in()) {
     exit;
 }
 
+
+//stupid comment
 $host = 'localhost'; 
 $dbname = 'books'; 
 $user = 'mark'; 
