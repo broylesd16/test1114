@@ -12,7 +12,7 @@ if (!is_logged_in()) {
 
 //stupid comment
 $host = 'localhost'; 
-$dbname = 'books'; 
+$dbname = 'books2'; 
 $user = 'mark'; 
 $pass = 'mark';
 $charset = 'utf8mb4';
