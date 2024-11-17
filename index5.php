@@ -165,7 +165,7 @@ $stmt = $pdo->query($sql);
                     <td>
                         <form action="index5.php" method="post" style="display:inline;">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                            <input type="submit" value="Remove Book From Collection">
+                            <input type="submit" value="Remove Book From Collection ">
                         </form>
                     </td>
                 </tr>
@@ -176,7 +176,7 @@ $stmt = $pdo->query($sql);
 
     <!-- Form section with container -->
     <div class="form-container">
-        <h2>Condemn a Book Today</h2>
+        <h2>Add a Book to your Collection</h2>
         <form action="index5.php" method="post">
             <label for="author">Author:</label>
             <input type="text" id="author" name="author" required>
@@ -187,7 +187,7 @@ $stmt = $pdo->query($sql);
             <label for="publisher">Publisher:</label>
             <input type="text" id="publisher" name="publisher" required>
             <br><br>
-            <label for="is_read">Title:</label>
+            <label for="is_read">Read?:</label>
             <input type="text" id="is_read" name="is_read" required>
             <br><br>
             <input type="submit" value="Condemn Book">
