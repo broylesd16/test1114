@@ -32,7 +32,7 @@ try {
 $search_results = null;
 if (isset($_GET['search']) && !empty($_GET['search'])) {
     $search_term = '%' . $_GET['search'] . '%';
-    $search_sql = 'SELECT id, author, title, publisher FROM books WHERE title LIKE :search';
+    $search_sql = 'SELECT id, author, title, publisher, is_read FROM books WHERE title LIKE :search';
     $search_stmt = $pdo->prepare($search_sql);
     $search_stmt->execute(['search' => $search_term]);
     $search_results = $search_stmt->fetchAll();
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $publisher = htmlspecialchars($_POST['publisher']);
         $is_read = htmlspecialchars($_POST['is_read']);
         
-        $insert_sql = 'INSERT INTO books (author, title, publisher, is_read) VALUES (:author, :title, :publisher, is_read)';
+        $insert_sql = 'INSERT INTO books (author, title, publisher, is_read) VALUES (:author, :title, :publisher, :is_read)';
         $stmt_insert = $pdo->prepare($insert_sql);
         $stmt_insert->execute(['author' => $author, 'title' => $title, 'publisher' => $publisher, 'is_read' => $is_read]);
     } elseif (isset($_POST['delete_id'])) {
@@ -85,7 +85,7 @@ $stmt = $pdo->query($sql);
         
         <!-- Search moved to hero section -->
         <div class="hero-search">
-            <h2>Search for a Book to Take</h2>
+            <h2>Search for a Book in Collection</h2>
             <form action="" method="GET" class="search-form">
                 <label for="search">Search by Title:</label>
                 <input type="text" id="search" name="search" required>
@@ -99,27 +99,36 @@ $stmt = $pdo->query($sql);
                         <table>
                             <thead>
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Author</th>
-                                    <th>Title</th>
-                                    <th>Publisher</th>
-                                    <th>Actions</th>
+                                <th>ID</th>
+                                <th>Author</th>
+                                <th>Title</th>
+                                <th>Publisher</th>
+                                <th>Has Been Read?</th>
+                                <th>Read Book</th>
+                                <th>Remove Book From Collection</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach ($search_results as $row): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($row['id']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['author']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['title']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['publisher']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['is_read']); ?></td>
-                                    <td>
-                                        <form action="index5.php" method="post" style="display:inline;">
-                                            <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                                            <input type="submit" value="Ban!">
-                                        </form>
-                                    </td>
+                                <td><?php echo htmlspecialchars($row['id']); ?></td>
+                                <td><?php echo htmlspecialchars($row['author']); ?></td>
+                                <td><?php echo htmlspecialchars($row['title']); ?></td>
+                                <td><?php echo htmlspecialchars($row['publisher']); ?></td>
+                                <td><?php echo htmlspecialchars($row['is_read']); ?></td>
+                                <td>
+                                    <form action="index5.php" method="post" style="display:inline;">
+                                        <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
+                                        <input type="submit" value="Read Book">
+                                    </form>
+                                </td>
+
+                                <td>
+                                    <form action="index5.php" method="post" style="display:inline;">
+                                        <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
+                                        <input type="submit" value="Remove Book From Collection ">
+                                    </form>
+                                </td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -134,7 +143,7 @@ $stmt = $pdo->query($sql);
 
     <!-- Table section with container -->
     <div class="table-container">
-        <h2>All Books in Database</h2>
+        <h2>All Books in Collection</h2>
         <table class="half-width-left-align">
             <thead>
                 <tr>
@@ -188,9 +197,12 @@ $stmt = $pdo->query($sql);
             <input type="text" id="publisher" name="publisher" required>
             <br><br>
             <label for="is_read">Read?:</label>
-            <input type="text" id="is_read" name="is_read" required>
+            <input type="radio" id="yes" name="is_read" value="yes">
+            <label for="yes">Yes</label>
+            <input type="radio" id="no" name="is_read" value="no">
+            <label for="no">No</label>
             <br><br>
-            <input type="submit" value="Condemn Book">
+            <input type="submit" value="Add Book to Collection">
         </form>
     </div>
 </body>
