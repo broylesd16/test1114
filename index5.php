@@ -10,7 +10,7 @@ if (!is_logged_in()) {
 }
 
 $host = 'localhost'; 
-$dbname = 'books'; 
+$dbname = 'books3'; 
 $user = 'mark'; 
 $pass = 'mark';
 $charset = 'utf8mb4';
@@ -40,16 +40,16 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['author']) && isset($_POST['title']) && isset($_POST['publisher']) && isset($_POST['read'])) {
+    if (isset($_POST['author']) && isset($_POST['title']) && isset($_POST['publisher']) && isset($_POST['is_read'])) {
         // Insert new entry
         $author = htmlspecialchars($_POST['author']);
         $title = htmlspecialchars($_POST['title']);
         $publisher = htmlspecialchars($_POST['publisher']);
-        $read = htmlspecialchars($_POST['read']);
+        $is_read = htmlspecialchars($_POST['is_read']);
         
-        $insert_sql = 'INSERT INTO books (author, title, publisher, read) VALUES (:author, :title, :publisher, read)';
+        $insert_sql = 'INSERT INTO books (author, title, publisher, is_read) VALUES (:author, :title, :publisher, is_read)';
         $stmt_insert = $pdo->prepare($insert_sql);
-        $stmt_insert->execute(['author' => $author, 'title' => $title, 'publisher' => $publisher, 'read' => $read]);
+        $stmt_insert->execute(['author' => $author, 'title' => $title, 'publisher' => $publisher, 'is_read' => $is_read]);
     } elseif (isset($_POST['delete_id'])) {
         // Delete an entry
         $delete_id = (int) $_POST['delete_id'];
@@ -59,14 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt_delete->execute(['id' => $delete_id]);
     } elseif (isset($_POST['edit_id'])) {
         $edit_id = (int) $_POST['edit_id'];
-        $edit_sql = 'UPDATE `books` SET `Read` = 'yes' WHERE `books`.`ID` = :id';
+        $edit_sql = "UPDATE `books` SET `is_read` = 'yes' WHERE `books`.`id` = :id";
         $stmt_edit = $pdo->prepare($edit_sql);
         $stmt_edit->execute(['id' => $edit_id]);
     }
 }
 
 // Get all books for main table
-$sql = 'SELECT id, author, title, publisher, read FROM books';
+$sql = 'SELECT id, author, title, publisher, is_read FROM books';
 $stmt = $pdo->query($sql);
 ?>
 
@@ -113,7 +113,7 @@ $stmt = $pdo->query($sql);
                                     <td><?php echo htmlspecialchars($row['author']); ?></td>
                                     <td><?php echo htmlspecialchars($row['title']); ?></td>
                                     <td><?php echo htmlspecialchars($row['publisher']); ?></td>
-                                    <td><?php echo htmlspecialchars($row['read']); ?></td>
+                                    <td><?php echo htmlspecialchars($row['is_read']); ?></td>
                                     <td>
                                         <form action="index5.php" method="post" style="display:inline;">
                                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
@@ -142,7 +142,9 @@ $stmt = $pdo->query($sql);
                     <th>Author</th>
                     <th>Title</th>
                     <th>Publisher</th>
-                    <th>Actions</th>
+                    <th>Has Been Read?</th>
+                    <th>Read Book</th>
+                    <th>Remove Book From Collection</th>
                 </tr>
             </thead>
             <tbody>
@@ -152,18 +154,18 @@ $stmt = $pdo->query($sql);
                     <td><?php echo htmlspecialchars($row['author']); ?></td>
                     <td><?php echo htmlspecialchars($row['title']); ?></td>
                     <td><?php echo htmlspecialchars($row['publisher']); ?></td>
-                    <td><?php echo htmlspecialchars($row['read']); ?></td>
+                    <td><?php echo htmlspecialchars($row['is_read']); ?></td>
                     <td>
                         <form action="index5.php" method="post" style="display:inline;">
                             <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
-                            <input type="submit" value="Read">
+                            <input type="submit" value="Read Book">
                         </form>
                     </td>
 
                     <td>
                         <form action="index5.php" method="post" style="display:inline;">
                             <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                            <input type="submit" value="Ban!">
+                            <input type="submit" value="Remove Book From Collection">
                         </form>
                     </td>
                 </tr>
@@ -185,8 +187,8 @@ $stmt = $pdo->query($sql);
             <label for="publisher">Publisher:</label>
             <input type="text" id="publisher" name="publisher" required>
             <br><br>
-            <label for="read">Title:</label>
-            <input type="text" id="read" name="read" required>
+            <label for="is_read">Title:</label>
+            <input type="text" id="is_read" name="is_read" required>
             <br><br>
             <input type="submit" value="Condemn Book">
         </form>
