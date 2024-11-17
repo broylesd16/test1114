@@ -57,9 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $delete_sql = 'DELETE FROM books WHERE id = :id';
         $stmt_delete = $pdo->prepare($delete_sql);
         $stmt_delete->execute(['id' => $delete_id]);
-    } elseif{
-        
-
+    } elseif (isset($_POST['edit_id'])) {
+        $edit_id = (int) $_POST['edit_id'];
+        $edit_sql = 'UPDATE `books` SET `Read` = 'yes' WHERE `books`.`ID` = :id';
+        $stmt_edit = $pdo->prepare($edit_sql);
+        $stmt_edit->execute(['id' => $edit_id]);
     }
 }
 
@@ -153,7 +155,7 @@ $stmt = $pdo->query($sql);
                     <td><?php echo htmlspecialchars($row['read']); ?></td>
                     <td>
                         <form action="index5.php" method="post" style="display:inline;">
-                            <input type="hidden" name="edit__id" value="<?php echo $row['read']; ?>">
+                            <input type="hidden" name="edit_id" value="<?php echo $row['id']; ?>">
                             <input type="submit" value="Read">
                         </form>
                     </td>
